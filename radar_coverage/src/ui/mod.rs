@@ -5,6 +5,37 @@ use crate::geo::LatLon;
 use crate::physics::refraction::RefractionParams;
 use std::sync::atomic::Ordering;
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum RCSProfile {
+    StealthFighter, // 5G (0.1)
+    Fighter,        // 4G (5.0)
+    SmallAircraft,  // 2.0
+    LargeAircraft,  // 50.0
+    Ship,           // 5000.0
+}
+
+impl RCSProfile {
+    pub fn value(&self) -> f64 {
+        match self {
+            RCSProfile::StealthFighter => 0.1,
+            RCSProfile::Fighter => 5.0,
+            RCSProfile::SmallAircraft => 2.0,
+            RCSProfile::LargeAircraft => 50.0,
+            RCSProfile::Ship => 5000.0,
+        }
+    }
+    
+    pub fn label(&self) -> &'static str {
+        match self {
+            RCSProfile::StealthFighter => "5G Stealth Fighter (0.1 m²)",
+            RCSProfile::Fighter => "4G Fighter (5.0 m²)",
+            RCSProfile::SmallAircraft => "Small Aircraft (2.0 m²)",
+            RCSProfile::LargeAircraft => "Large Aircraft (50.0 m²)",
+            RCSProfile::Ship => "Ship (5000.0 m²)",
+        }
+    }
+}
+
 #[derive(Resource)]
 pub struct MapController {
     pub center: LatLon,
@@ -12,6 +43,7 @@ pub struct MapController {
     pub move_speed: f32,
     pub show_coverage: bool,
     pub target_agl: f32,
+    pub rcs_profile: RCSProfile,
 }
 
 impl Default for MapController {
@@ -22,6 +54,7 @@ impl Default for MapController {
             move_speed: 1000.0,
             show_coverage: false,
             target_agl: 50.0,
+            rcs_profile: RCSProfile::Fighter,
         }
     }
 }
@@ -184,10 +217,23 @@ pub fn ui_panel_system(
                     controller.target_agl = (controller.target_agl + 50.0).min(2000.0);
                 }
             });
+            
+            ui.add_space(5.0);
+            
+            egui::ComboBox::from_label("Target RCS Profile")
+                .selected_text(controller.rcs_profile.label())
+                .show_ui(ui, |ui| {
+                    ui.selectable_value(&mut controller.rcs_profile, RCSProfile::StealthFighter, RCSProfile::StealthFighter.label());
+                    ui.selectable_value(&mut controller.rcs_profile, RCSProfile::Fighter, RCSProfile::Fighter.label());
+                    ui.selectable_value(&mut controller.rcs_profile, RCSProfile::SmallAircraft, RCSProfile::SmallAircraft.label());
+                    ui.selectable_value(&mut controller.rcs_profile, RCSProfile::LargeAircraft, RCSProfile::LargeAircraft.label());
+                    ui.selectable_value(&mut controller.rcs_profile, RCSProfile::Ship, RCSProfile::Ship.label());
+                });
         }
         
         ui.separator();
         ui.heading("Metrics");
+
         ui.label(format!("Tiles Computed: {}", metrics.tiles_computed));
         ui.label(format!("Cache Hits: {}", metrics.cache_hits));
         

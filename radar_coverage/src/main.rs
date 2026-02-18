@@ -369,7 +369,7 @@ fn schedule_coverage_tasks(
     // Queries to check if task already exists or chunk already loaded
     computing: Query<&ComputingCoverage>, 
     existing_chunks: Query<&CoverageChunk>,
-    // Existing coverage chunks to check for stale AGL
+    // Existing coverage chunks to check for stale AGL/RCS
     coverage_chunks: Query<(Entity, &CoverageChunk)>,
 ) {
     if !controller.show_coverage {
@@ -388,9 +388,9 @@ fn schedule_coverage_tasks(
             None => continue, 
         };
 
-        // Compute hash for this radar conf (including AGL)
-        // We use AGL from controller.
+        // Compute hash for this radar conf (including AGL and RCS)
         let target_agl = controller.target_agl;
+        let target_rcs = controller.rcs_profile.value();
         
         let mut hasher = std::collections::hash_map::DefaultHasher::new();
         use std::hash::{Hash, Hasher};
@@ -399,11 +399,11 @@ fn schedule_coverage_tasks(
         radar.location.longitude.to_bits().hash(&mut hasher);
         radar.location.altitude.to_bits().hash(&mut hasher);
         target_agl.to_bits().hash(&mut hasher);
+        target_rcs.to_bits().hash(&mut hasher);
         // Add other params that affect coverage
         radar.frequency_mhz.to_bits().hash(&mut hasher);
         radar.tx_power_w.to_bits().hash(&mut hasher);
         radar.gain_dbi.to_bits().hash(&mut hasher);
-        
         
         let radar_hash = hasher.finish();
 
@@ -467,17 +467,16 @@ fn schedule_coverage_tasks(
                     let radar_clone = radar.clone();
                     let viewshed_clone = viewshed.clone();
                     
-                    let step_size = 2; // Higher resolution (was 16). Viewshed lookup is fast enough. 
+                    let step_size = 2; // Higher resolution.
                     
                     let task = task_pool.spawn(async move {
-                        // No LosSystem needed directly here, but we pass terrain for altitude
                         let result = compute_coverage_tile(
                             radar_clone,
                             terrain_manager, 
                             viewshed_clone,
                             lat, 
                             lon, 
-                            1.0, 
+                            target_rcs, 
                             target_agl as f64, 
                             step_size
                         );
@@ -493,7 +492,6 @@ fn schedule_coverage_tasks(
         }
     }
 }
-
 fn handle_coverage_tasks(
     mut commands: Commands,
     mut tasks: Query<(Entity, &mut CoverageTask, &ComputingCoverage)>,
