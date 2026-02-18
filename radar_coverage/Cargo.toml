@@ -1,0 +1,23 @@
+[package]
+name = "radar_coverage"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.101"
+bevy = "0.15.1"
+bevy_egui = "0.32"
+csv = "1.4.0"
+futures-lite = "2.6.1"
+itertools = "0.14.0"
+lru = "0.16.3"
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.149"
+thiserror = "2.0.18"
+
+[dev-dependencies]
+criterion = "0.8.2"
+
+[[bench]]
+name = "coverage"
+harness = false

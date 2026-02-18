@@ -1,0 +1,124 @@
+    Checking radar_coverage v0.1.0 (/Users/jean-baptiste/AIRC-Antigravity/radar_coverage)
+error[E0583]: file not found for module `cache`
+ --> src/lib.rs:8:1
+  |
+8 | pub mod cache;
+  | ^^^^^^^^^^^^^^
+  |
+  = help: to create the module `cache`, create file "src/cache.rs" or "src/cache/mod.rs"
+  = note: if there is a `mod cache` elsewhere in the crate already, import it with `use crate::...` instead
+
+error[E0432]: unresolved import `bevy::render::render_resource::RenderAssetUsages`
+ --> src/render/mod.rs:3:56
+  |
+3 | use bevy::render::render_resource::{PrimitiveTopology, RenderAssetUsages};
+  |                                                        ^^^^^^^^^^^^^^^^^ no `RenderAssetUsages` in `render_resource`
+
+warning: unused import: `bevy::prelude::*`
+ --> src/geo/mod.rs:1:5
+  |
+1 | use bevy::prelude::*;
+  |     ^^^^^^^^^^^^^^^^
+  |
+  = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `Path`
+ --> src/terrain/mod.rs:2:17
+  |
+2 | use std::path::{Path, PathBuf};
+  |                 ^^^^
+
+warning: unused import: `LosResult`
+ --> src/coverage/mod.rs:6:38
+  |
+6 | use crate::physics::los::{LosSystem, LosResult};
+  |                                      ^^^^^^^^^
+
+warning: unused import: `WebMercator`
+ --> src/ui/mod.rs:4:26
+  |
+4 | use crate::geo::{LatLon, WebMercator, latlon_to_webmercator};
+  |                          ^^^^^^^^^^^
+
+warning: unused import: `crate::io::Radar`
+ --> src/ui/mod.rs:5:5
+  |
+5 | use crate::io::Radar;
+  |     ^^^^^^^^^^^^^^^^
+
+warning: unused import: `std::ops::Deref`
+ --> src/ui/mod.rs:7:5
+  |
+7 | use std::ops::Deref;
+  |     ^^^^^^^^^^^^^^^
+
+warning: unused attribute
+  --> src/terrain/mod.rs:52:5
+   |
+52 |     #[inline(always)]
+   |     ^^^^^^^^^^^^^^^^^ help: remove this attribute
+   |
+note: attribute also specified here
+  --> src/terrain/mod.rs:51:5
+   |
+51 |     #[inline(always)]
+   |     ^^^^^^^^^^^^^^^^^
+   = warning: this was previously accepted by the compiler but is being phased out; it will become a hard error in a future release!
+   = note: `#[warn(unused_attributes)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `bevy::prelude`
+ --> src/terrain/mod.rs:1:5
+  |
+1 | use bevy::prelude::*;
+  |     ^^^^^^^^^^^^^
+
+warning: variable does not need to be mutable
+  --> src/ui/mod.rs:27:5
+   |
+27 |     mut controller: ResMut<MapController>,
+   |     ----^^^^^^^^^^
+   |     |
+   |     help: remove this `mut`
+   |
+   = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: variable does not need to be mutable
+  --> src/ui/mod.rs:29:5
+   |
+29 |     mut mouse_motion: EventReader<MouseMotion>,
+   |     ----^^^^^^^^^^^^
+   |     |
+   |     help: remove this `mut`
+
+warning: variable does not need to be mutable
+  --> src/ui/mod.rs:30:5
+   |
+30 |     mut scroll_evr: EventReader<MouseWheel>,
+   |     ----^^^^^^^^^^
+   |     |
+   |     help: remove this `mut`
+
+warning: unused variable: `mouse_motion`
+  --> src/ui/mod.rs:29:5
+   |
+29 |     mut mouse_motion: EventReader<MouseMotion>,
+   |     ^^^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_mouse_motion`
+   |
+   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused variable: `scroll_evr`
+  --> src/ui/mod.rs:30:5
+   |
+30 |     mut scroll_evr: EventReader<MouseWheel>,
+   |     ^^^^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_scroll_evr`
+
+warning: unused variable: `center_merc`
+  --> src/ui/mod.rs:59:9
+   |
+59 |     let center_merc = latlon_to_webmercator(controller.center);
+   |         ^^^^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_center_merc`
+
+Some errors have detailed explanations: E0432, E0583.
+For more information about an error, try `rustc --explain E0432`.
+warning: `radar_coverage` (lib) generated 14 warnings
+error: could not compile `radar_coverage` (lib) due to 2 previous errors; 14 warnings emitted

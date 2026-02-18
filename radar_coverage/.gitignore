@@ -1,0 +1,5 @@
+target/
+assets/
+**/*.hgt
+**/*.DS_Store
+*.log
